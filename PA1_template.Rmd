@@ -7,8 +7,19 @@ output:
 
 
 ## Loading and preprocessing the data
+First you will need to unzip the data using the unzip function. Then load the activity data from your current working directory using read.csv. The data will be assigned to variable activity.data.
 
+```{r unzip, echo = TRUE, results="hide"}
+unzip("./activity.zip")
+activity.data <- read.csv("./activity.csv", colClasses = c("numeric", "character", "numeric"))
+```
 
+Then you will need to change the date to the Posixlt format for ease of use later in the analysis.
+
+```{r updatedate, echo = TRUE, results="hide"}
+unzip("./activity.zip")
+activity.data$date <- as.POSIXlt(activity.data$date)
+```
 
 ## What is mean total number of steps taken per day?
 
