@@ -7,23 +7,39 @@ output:
 
 
 ## Loading and preprocessing the data
-First you will need to unzip the data using the unzip function. Then load the activity data from your current working directory using read.csv. The data will be assigned to variable activity.data.
+First I unzip the data using the unzip function. Then load the activity data from your current working directory using read.csv. The data will be assigned to variable activity.data.
 
-```{r unzip, echo = TRUE, results="hide"}
+```{r unzip, echo = TRUE, results = "hide"}
 unzip("./activity.zip")
 activity.data <- read.csv("./activity.csv", colClasses = c("numeric", "character", "numeric"))
 ```
 
-Then you will need to change the date to the Posixlt format for ease of use later in the analysis.
+Then I change the date to the Posixlt format for ease of use later in the analysis.
 
-```{r updatedate, echo = TRUE, results="hide"}
+```{r updatedate, echo = TRUE, results = "hide"}
 unzip("./activity.zip")
 activity.data$date <- as.POSIXlt(activity.data$date)
 ```
 
 ## What is mean total number of steps taken per day?
+In order to determine the sum of steps each day I use the tapply function and assign it to sum.day.
 
+```{r sumday, echo = TRUE, results = "hide"}
+sum.day <- tapply(activity.data$steps, as.POSIXct(activity.data$date), sum, na.rm = TRUE)
+```
 
+Now I will generate the histogram to show the distribution of total daily steps.
+
+```{r sumhisto, echo = TRUE, fig.height = 4}
+hist(sum.day, main = "Histogram - Total Daily Steps", xlab = "Total Daily Steps")
+```
+
+```{r sumday, echo = TRUE, results = "hide"}
+sum.mean <- mean(sum.day)
+sum.median <- median(sum.day)
+```
+
+The mean of total daily steps is: `r sum.mean`, and the median is: `r sum.median`.
 
 ## What is the average daily activity pattern?
 
