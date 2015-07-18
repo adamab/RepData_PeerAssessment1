@@ -42,8 +42,25 @@ sum.median <- median(sum.day)
 The mean of total daily steps is: `r sum.mean`, and the median is: `r sum.median`.
 
 ## What is the average daily activity pattern?
+I will now generate the average daily steps for each 5 minute interval.
 
+```{r intervalaverage, echo = TRUE, results = "hide"}
+sum.interval <- tapply(activity.data$steps, activity.data$interval, mean, na.rm = TRUE)
+```
 
+This is a time series of the results from the above computation.
+
+```{r timeseries, echo = TRUE, fig.height = 4}
+plot(sum.interval, type = "l", xlab = "Interval", ylab = "Average Daily Steps", main = "Average Daily Steps Time Series")
+```
+
+```{r intervalaverage, echo = TRUE, results = "hide"}
+max.interval <- max(sum.interval)
+interval.max <- as.numeric(names(sum.interval[sum.interval = max.interval]))
+```
+There is an interesting peak in the time series. Let's see what the value is, and for which interval it is.  
+
+The value is `r max.interval` for interval `r interval.max`.
 
 ## Imputing missing values
 
