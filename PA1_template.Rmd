@@ -56,11 +56,12 @@ plot(sum.interval, type = "l", xlab = "Interval", ylab = "Average Daily Steps", 
 
 ```{r intervalaveragemax, echo = TRUE, results = "hide"}
 max.interval <- max(sum.interval)
-interval.max <- as.numeric(names(sum.interval[sum.interval = max.interval]))
+position <- which(max.interval == sum.interval)
+interval.max <- as.numeric(names(sum.interval[position]))
 ```
 There is an interesting peak in the time series. Let's see what the value is, and for which interval it is.  
 
-The value is `r max.interval` for interval `r interval.max`.
+The value at position `r position` is  `r max.interval` for interval `r interval.max`.
 
 ## Imputing missing values
 I saw some missing values in the dataset. All of the previous calculations have removed the NAs. That might distort the analysis. Now I will update the NAs to allow for a more robust analysis.  
