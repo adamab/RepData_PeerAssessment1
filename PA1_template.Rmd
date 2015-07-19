@@ -51,7 +51,7 @@ sum.interval <- tapply(activity.data$steps, activity.data$interval, mean, na.rm 
 This is a time series of the results from the above computation.
 
 ```{r timeseries, echo = TRUE, fig.height = 4}
-plot(sum.interval, type = "l", xlab = "Interval", ylab = "Average Daily Steps", main = "Average Daily Steps Time Series")
+plot(names(sum.interval), sum.interval, type = "l", xlab = "Interval", ylab = "Average Daily Steps", main = "Average Daily Steps Time Series")
 ```
 
 ```{r intervalaveragemax, echo = TRUE, results = "hide"}
@@ -102,3 +102,19 @@ The means are `r mean.difference` steps apart, and the medians are `r median.dif
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
+I create a factor variable weekend in the activity.impute dataset. This variable is then populated based on the values in the date variable for the same dataset.
+
+```{r imputefactor, echo = TRUE, results = "hide"}
+activity.impute$weekend <- factor(x = NA, levels = c("weekday", "weekend"), ordered = FALSE)
+activity.impute$weekend[which(activity.impute$date$wday == c(0,6))] <- "weekend"
+activity.impute$weekend[which(activity.impute$date$wday != c(0,6))] <- "weekday"
+```
+
+Now, I create a panel plot of the weekday and weekend average daily steps by interval.
+```{r intervalaverageweekday, echo = TRUE, fig.height = 10}
+par(mfrow = c(2,1), mar = c(2,4,4,2))
+weekday.interval <- tapply(activity.impute$steps, list(activity.impute$interval,activity.impute$weekend), mean)
+plot(rownames(weekday.interval), weekday.interval[,1], xlab = "Interval", main = "weekday", type = "l", ylab = "Steps")
+plot(rownames(weekday.interval), weekday.interval[,2], xlab = "Interval", main = "weekend", type = "l", ylab = "Steps")
+```
+It appears there are more steps taken on the weekends than weekdays. Why is that I wonder? This will require more analysis!
