@@ -34,7 +34,7 @@ Now I will generate the histogram to show the distribution of total daily steps.
 hist(sum.day, main = "Histogram - Total Daily Steps", xlab = "Total Daily Steps")
 ```
 
-```{r sumday, echo = TRUE, results = "hide"}
+```{r sumdaycenters, echo = TRUE, results = "hide"}
 sum.mean <- mean(sum.day)
 sum.median <- median(sum.day)
 ```
@@ -54,7 +54,7 @@ This is a time series of the results from the above computation.
 plot(sum.interval, type = "l", xlab = "Interval", ylab = "Average Daily Steps", main = "Average Daily Steps Time Series")
 ```
 
-```{r intervalaverage, echo = TRUE, results = "hide"}
+```{r intervalaveragemax, echo = TRUE, results = "hide"}
 max.interval <- max(sum.interval)
 interval.max <- as.numeric(names(sum.interval[sum.interval = max.interval]))
 ```
@@ -63,7 +63,41 @@ There is an interesting peak in the time series. Let's see what the value is, an
 The value is `r max.interval` for interval `r interval.max`.
 
 ## Imputing missing values
+I saw some missing values in the dataset. All of the previous calculations have removed the NAs. That might distort the analysis. Now I will update the NAs to allow for a more robust analysis.  
 
+```{r missingcount, echo = TRUE, results = "hide"}
+missing.count <- sum(is.na(activity.data))
+```
+
+First, I calculate the number of missing values to be `r missing.count`. I impute a value for each them, that is a fancy way of saying I will give them a value. This is done by way of random sampling from the non-missing values. Note I am imputing the data into another variable, so that I can have my original dataset preserved for reference.
+
+```{r imputemissing, echo = TRUE, results = "hide"}
+activity.impute <- activity.data
+activity.impute$steps[is.na(activity.impute$steps)] <- sample(activity.impute$steps[!is.na(activity.impute$steps)], missing.count, replace = TRUE)
+```
+
+I revisit an earlier analysis to compare the impute data set to the original. The histogram of total daily steps will do nicely for comparison. Using the same steps from above I arrive at the below 2 histograms for imputed and not data.
+
+```{r imputesumday, echo = TRUE, results = "hide"}
+sum.day.impute <- tapply(activity.impute$steps, as.POSIXct(activity.impute$date), sum)
+```
+
+```{r sumhistoimpute, echo = TRUE, fig.height = 4, fig.width = 10}
+par(mfrow = c(1,2), mar = c(4,4,4,4))
+hist(sum.day.impute, main = "Histogram - Total Daily Steps (Imputed)", xlab = "Total Daily Steps")
+
+hist(sum.day, main = "Histogram - Total Daily Steps", xlab = "Total Daily Steps")
+```
+
+```{r sumdaycentersimpute, echo = TRUE, results = "hide"}
+sum.mean.impute <- mean(sum.day.impute)
+sum.median.impute <- median(sum.day.impute)
+mean.difference <- abs(sum.mean - sum.mean.impute)
+median.difference <- abs(sum.median - sum.median.impute)
+difference.text <- if(mean.difference > 0 || median.difference > 0) { "There is a difference in center between the original and imputed datasets. Imputing normalizes the dataset."} else {"WOW! There is no difference in the center between the original and imputed datasets. Imputing doesn't change anything."}
+```
+
+The means are `r mean.difference` steps apart, and the medians are `r median.difference` steps apart. `r difference.text`.
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
